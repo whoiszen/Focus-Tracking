@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FocusFlow — Stay in the Zone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- PAGE LOAD OVERLAY -->
+  <div id="loader-overlay">
+    <div class="loader-inner">
+      <div class="loader-logo">FF</div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+      <p class="loader-text">Initializing FocusFlow...</p>
+    </div>
+  </div>
+
+  <!-- SIDEBAR OVERLAY BACKDROP -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <nav id="sidebar" class="sidebar" aria-label="Sidebar Navigation">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">FocusFlow</span>
+      </div>
+      <button id="sidebar-close" class="sidebar-close-btn" aria-label="Close Sidebar">✕</button>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="#hero-section" class="sidebar-link" data-section="hero">
+        <span class="nav-icon">◈</span> Home
+      </a></li>
+      <li><a href="#timer-section" class="sidebar-link" data-section="timer">
+        <span class="nav-icon">◷</span> Focus Timer
+      </a></li>
+      <li><a href="#tasks-section" class="sidebar-link" data-section="tasks">
+        <span class="nav-icon">◧</span> Task Board
+      </a></li>
+      <li><a href="#ambient-section" class="sidebar-link" data-section="ambient">
+        <span class="nav-icon">◈</span> Ambient Zone
+      </a></li>
+      <li><a href="#stats-section" class="sidebar-link" data-section="stats">
+        <span class="nav-icon">◫</span> Stats
+      </a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <p class="sidebar-tagline">Stay in the zone.<br/>One session at a time.</p>
+      <div class="sidebar-session-badge">
+        <span>Sessions today:</span>
+        <span id="sidebar-session-count">0</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- TOP NAVIGATION BAR -->
+  <header id="topbar" class="topbar">
+    <button id="menu-btn" class="menu-btn" aria-label="Open Navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="topbar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FocusFlow</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-status" id="topbar-status">
+        <span class="status-dot"></span>
+        <span id="status-label">Ready</span>
+      </div>
+      <div class="topbar-shortcuts-hint">
+        <kbd>Space</kbd> timer &nbsp;·&nbsp; <kbd>ESC</kbd> menu
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content">
+
+    <!-- ═══ SECTION 1: HERO ═══ -->
+    <section id="hero-section" class="section hero-section">
+      <div class="parallax-bg" id="parallax-bg">
+        <div class="parallax-layer layer-1"></div>
+        <div class="parallax-layer layer-2"></div>
+        <div class="parallax-layer layer-3"></div>
+        <div class="grid-overlay"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge reveal-on-load delay-1">
+          <span class="badge-dot"></span> Focus Mode Active
+        </div>
+        <h1 class="hero-headline reveal-on-load delay-2">
+          Master Your<br/>
+          <span class="headline-accent">Focus.</span>
+        </h1>
+        <p class="hero-sub reveal-on-load delay-3">
+          Track sessions, eliminate distractions,<br/>and build deep work habits — one block at a time.
+        </p>
+        <div class="hero-cta reveal-on-load delay-4">
+          <button class="btn btn-primary" id="hero-start-btn">
+            <span>Start Focus Session</span>
+            <span class="btn-icon">→</span>
+          </button>
+          <button class="btn btn-ghost" id="hero-learn-btn">
+            How it Works
+          </button>
+        </div>
+        <div class="hero-stats reveal-on-load delay-5">
+          <div class="hero-stat">
+            <span class="stat-number" id="total-sessions-hero">0</span>
+            <span class="stat-label">Sessions</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="stat-number" id="total-minutes-hero">0</span>
+            <span class="stat-label">Minutes Focused</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="stat-number" id="total-tasks-hero">0</span>
+            <span class="stat-label">Tasks Done</span>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-indicator">
+        <div class="scroll-arrow"></div>
+        <span>Scroll to explore</span>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 2: FOCUS TIMER ═══ -->
+    <section id="timer-section" class="section timer-section">
+      <div class="section-header">
+        <div class="section-tag">FOCUS TIMER</div>
+        <h2 class="section-title">Lock In.<br/><span class="accent">Deep Work Mode.</span></h2>
+      </div>
+
+      <!-- Timer Mode Toggle -->
+      <div class="timer-mode-toggle">
+        <button class="mode-btn active" id="mode-pomodoro" data-mode="pomodoro">
+          <span class="mode-icon">⏱</span> Pomodoro
+        </button>
+        <button class="mode-btn" id="mode-custom" data-mode="custom">
+          <span class="mode-icon">⚙</span> Custom
+        </button>
+      </div>
+
+      <div class="timer-layout">
+        <!-- Timer Display -->
+        <div class="timer-card glass-card">
+          <div class="timer-phase-label" id="timer-phase">FOCUS</div>
+          <div class="timer-ring-wrapper">
+            <svg class="timer-ring" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+              <circle class="ring-track" cx="110" cy="110" r="96"/>
+              <circle class="ring-progress" id="ring-progress" cx="110" cy="110" r="96"/>
+            </svg>
+            <div class="timer-display">
+              <span id="timer-minutes">25</span>
+              <span class="timer-colon">:</span>
+              <span id="timer-seconds">00</span>
+            </div>
+          </div>
+          <div class="timer-controls">
+            <button class="timer-btn" id="timer-reset-btn" title="Reset">↺</button>
+            <button class="timer-btn timer-btn-main" id="timer-start-btn" title="Start / Pause">
+              <span id="timer-btn-icon">▶</span>
+            </button>
+            <button class="timer-btn" id="timer-skip-btn" title="Skip Phase">⟫</button>
+          </div>
+          <div class="timer-session-info">
+            <span>Session <strong id="current-session-num">1</strong> of 4</span>
+            <span class="dot-sep">·</span>
+            <span id="next-phase-label">Break next</span>
+          </div>
+        </div>
+
+        <!-- Pomodoro Config Panel -->
+        <div class="timer-config glass-card" id="pomodoro-config">
+          <h3 class="config-title">Session Settings</h3>
+          <div class="config-grid">
+            <div class="config-item">
+              <label class="config-label">Focus Duration</label>
+              <div class="config-control">
+                <button class="ctrl-btn" data-target="focus-val" data-delta="-5">−</button>
+                <span class="config-val" id="focus-val">25</span>
+                <span class="config-unit">min</span>
+                <button class="ctrl-btn" data-target="focus-val" data-delta="5">+</button>
+              </div>
+            </div>
+            <div class="config-item">
+              <label class="config-label">Short Break</label>
+              <div class="config-control">
+                <button class="ctrl-btn" data-target="short-break-val" data-delta="-1">−</button>
+                <span class="config-val" id="short-break-val">5</span>
+                <span class="config-unit">min</span>
+                <button class="ctrl-btn" data-target="short-break-val" data-delta="1">+</button>
+              </div>
+            </div>
+            <div class="config-item">
+              <label class="config-label">Long Break</label>
+              <div class="config-control">
+                <button class="ctrl-btn" data-target="long-break-val" data-delta="-5">−</button>
+                <span class="config-val" id="long-break-val">15</span>
+                <span class="config-unit">min</span>
+                <button class="ctrl-btn" data-target="long-break-val" data-delta="5">+</button>
+              </div>
+            </div>
+            <div class="config-item">
+              <label class="config-label">Sessions until Long Break</label>
+              <div class="config-control">
+                <button class="ctrl-btn" data-target="sessions-val" data-delta="-1">−</button>
+                <span class="config-val" id="sessions-val">4</span>
+                <span class="config-unit">sess</span>
+                <button class="ctrl-btn" data-target="sessions-val" data-delta="1">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Timer Config Panel -->
+        <div class="timer-config glass-card hidden" id="custom-config">
+          <h3 class="config-title">Custom Duration</h3>
+          <div class="custom-input-wrapper">
+            <label class="config-label">Set your focus duration</label>
+            <div class="custom-time-inputs">
+              <div class="time-input-group">
+                <input type="number" id="custom-hours" class="time-input" min="0" max="23" value="0" placeholder="0" />
+                <label>HRS</label>
+              </div>
+              <div class="time-sep">:</div>
+              <div class="time-input-group">
+                <input type="number" id="custom-minutes" class="time-input" min="0" max="59" value="45" placeholder="45" />
+                <label>MIN</label>
+              </div>
+              <div class="time-sep">:</div>
+              <div class="time-input-group">
+                <input type="number" id="custom-seconds" class="time-input" min="0" max="59" value="0" placeholder="0" />
+                <label>SEC</label>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" id="set-custom-btn">Set Timer</button>
+          </div>
+        </div>
+
+        <!-- Keyboard Shortcuts Card -->
+        <div class="shortcuts-card glass-card">
+          <h3 class="config-title">Keyboard Shortcuts</h3>
+          <ul class="shortcuts-list">
+            <li><kbd>Space</kbd> <span>Start / Pause Timer</span></li>
+            <li><kbd>R</kbd> <span>Reset Timer</span></li>
+            <li><kbd>S</kbd> <span>Skip Phase</span></li>
+            <li><kbd>ESC</kbd> <span>Close Sidebar</span></li>
+            <li><kbd>M</kbd> <span>Open Menu</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Notification Banner -->
+      <div class="notif-banner hidden" id="notif-banner">
+        <span class="notif-icon">🔔</span>
+        <span id="notif-text">Time's up!</span>
+        <button class="notif-close" id="notif-close">✕</button>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 3: TASK BOARD ═══ -->
+    <section id="tasks-section" class="section tasks-section">
+      <div class="section-header">
+        <div class="section-tag">TASK BOARD</div>
+        <h2 class="section-title">What are you<br/><span class="accent">working on?</span></h2>
+      </div>
+
+      <!-- Task Form -->
+      <form id="task-form" class="task-form glass-card" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-input">Task Name</label>
+            <input type="text" id="task-input" class="form-control" placeholder="e.g. Write chapter 3 of report..." maxlength="80" autocomplete="off" />
+            <span class="form-error" id="task-name-error"></span>
+          </div>
+          <div class="form-group form-group-sm">
+            <label class="form-label" for="task-category">Category</label>
+            <select id="task-category" class="form-control form-select">
+              <option value="deep-work">🧠 Deep Work</option>
+              <option value="admin">📋 Admin</option>
+              <option value="creative">🎨 Creative</option>
+              <option value="learning">📚 Learning</option>
+              <option value="meeting">💬 Meeting</option>
+            </select>
+          </div>
+          <div class="form-group form-group-sm">
+            <label class="form-label" for="task-priority">Priority</label>
+            <select id="task-priority" class="form-control form-select">
+              <option value="high">🔴 High</option>
+              <option value="medium">🟡 Medium</option>
+              <option value="low">🟢 Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row form-row-actions">
+          <div class="form-group form-group-note">
+            <label class="form-label" for="task-note">Quick Note (optional)</label>
+            <input type="text" id="task-note" class="form-control" placeholder="Any context or details..." maxlength="120" autocomplete="off" />
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span>Add Task</span>
+            <span class="btn-icon">+</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Task Filters -->
+      <div class="task-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="done">Completed</button>
+        <div class="filter-count">
+          <span id="active-count">0</span> remaining
+        </div>
+      </div>
+
+      <!-- Task List -->
+      <div class="task-list" id="task-list">
+        <div class="task-empty" id="task-empty">
+          <div class="empty-icon">◈</div>
+          <p>No tasks yet. Add one above to get started.</p>
+        </div>
+      </div>
+
+      <!-- Bulk Actions -->
+      <div class="task-bulk-actions" id="bulk-actions">
+        <button class="btn btn-ghost btn-sm" id="clear-done-btn">Clear Completed</button>
+        <span id="done-count">0 done</span>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 4: AMBIENT VIDEO ═══ -->
+    <section id="ambient-section" class="section ambient-section">
+      <div class="section-header">
+        <div class="section-tag">AMBIENT ZONE</div>
+        <h2 class="section-title">Set the<br/><span class="accent">Atmosphere.</span></h2>
+        <p class="section-desc">Play lo-fi beats to enhance focus. Video events are tracked in real time.</p>
+      </div>
+
+      <div class="ambient-layout">
+        <div class="video-wrapper glass-card" id="video-wrapper">
+          <div class="video-container">
+            <div id="yt-player"></div>
+            <div class="video-overlay" id="video-overlay">
+              <button class="video-play-btn" id="video-play-btn">
+                <span>▶</span>
+              </button>
+            </div>
+          </div>
+          <div class="video-controls-bar">
+            <div class="video-info">
+              <span class="video-title-label">🎵 Lo-Fi Focus Beats</span>
+              <span class="video-status-badge" id="video-status-badge">Stopped</span>
+            </div>
+            <div class="video-btns">
+              <button class="vctrl-btn" id="vid-play">▶ Play</button>
+              <button class="vctrl-btn" id="vid-pause">⏸ Pause</button>
+              <button class="vctrl-btn" id="vid-mute">🔇 Mute</button>
+            </div>
+          </div>
+          <div class="video-event-log" id="video-event-log">
+            <div class="log-header">Event Log</div>
+            <div class="log-entries" id="log-entries">
+              <div class="log-entry log-entry-idle">Waiting for video interaction...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ambient-side">
+          <div class="glass-card ambient-tip-card">
+            <h3 class="config-title">Why Ambient Sound?</h3>
+            <p class="ambient-tip-text">Research suggests that low-level ambient noise (~70dB) can enhance creative cognition. Lo-fi music masks distractions and creates a consistent audio environment for deep work.</p>
+          </div>
+          <div class="glass-card ambient-status-card">
+            <h3 class="config-title">Video Events Fired</h3>
+            <div class="video-events-grid" id="video-events-grid">
+              <div class="vevent-item" data-event="play">
+                <span class="vevent-icon">▶</span>
+                <span class="vevent-name">Play</span>
+                <span class="vevent-count" id="evt-play">0</span>
+              </div>
+              <div class="vevent-item" data-event="pause">
+                <span class="vevent-icon">⏸</span>
+                <span class="vevent-name">Pause</span>
+                <span class="vevent-count" id="evt-pause">0</span>
+              </div>
+              <div class="vevent-item" data-event="end">
+                <span class="vevent-icon">⏹</span>
+                <span class="vevent-name">End</span>
+                <span class="vevent-count" id="evt-end">0</span>
+              </div>
+              <div class="vevent-item" data-event="mute">
+                <span class="vevent-icon">🔇</span>
+                <span class="vevent-name">Mute</span>
+                <span class="vevent-count" id="evt-mute">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 5: STATS ═══ -->
+    <section id="stats-section" class="section stats-section">
+      <div class="section-header">
+        <div class="section-tag">YOUR STATS</div>
+        <h2 class="section-title">Your Focus<br/><span class="accent">Progress.</span></h2>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card glass-card scroll-reveal" data-delay="0">
+          <div class="stat-card-icon">🔥</div>
+          <div class="stat-card-value" id="stat-sessions">0</div>
+          <div class="stat-card-label">Focus Sessions</div>
+          <div class="stat-card-sub">All time</div>
+        </div>
+        <div class="stat-card glass-card scroll-reveal" data-delay="100">
+          <div class="stat-card-icon">⏰</div>
+          <div class="stat-card-value" id="stat-minutes">0</div>
+          <div class="stat-card-label">Minutes Focused</div>
+          <div class="stat-card-sub">All time</div>
+        </div>
+        <div class="stat-card glass-card scroll-reveal" data-delay="200">
+          <div class="stat-card-icon">✅</div>
+          <div class="stat-card-value" id="stat-tasks">0</div>
+          <div class="stat-card-label">Tasks Completed</div>
+          <div class="stat-card-sub">All time</div>
+        </div>
+        <div class="stat-card glass-card scroll-reveal" data-delay="300">
+          <div class="stat-card-icon">📅</div>
+          <div class="stat-card-value" id="stat-today">0</div>
+          <div class="stat-card-label">Sessions Today</div>
+          <div class="stat-card-sub">Keep it up!</div>
+        </div>
+      </div>
+
+      <!-- Session History -->
+      <div class="history-wrapper glass-card scroll-reveal" data-delay="200">
+        <div class="history-header">
+          <h3 class="config-title">Session History</h3>
+          <button class="btn btn-ghost btn-sm" id="clear-history-btn">Clear All</button>
+        </div>
+        <div class="history-list" id="history-list">
+          <div class="history-empty">No sessions recorded yet. Start your first focus session!</div>
+        </div>
+      </div>
+
+      <!-- Reset Stats Button -->
+      <div class="stats-reset-row">
+        <button class="btn btn-danger btn-sm" id="reset-stats-btn">Reset All Stats</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span class="logo-icon">⬡</span> FocusFlow
+      </div>
+      <p class="footer-text">Built for PF 302 — Event Driven Programming &nbsp;·&nbsp; Mater Dei College</p>
+      <p class="footer-shortcuts">Press <kbd>ESC</kbd> to close sidebar &nbsp;·&nbsp; <kbd>Space</kbd> to toggle timer</p>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="main.js"></script>
+</body>
+</html>
