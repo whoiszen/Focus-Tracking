@@ -453,7 +453,7 @@ function pauseTimer() {
 }
 
 function resetTimer() {
-  clearInterval(state.timer.intervalId);
+  clearInterval(state.timer.intervalId); //e stop niya 
   state.timer.running = false;
   state.timer.paused = false;
   state.timer.remainingSeconds = state.timer.totalSeconds;
@@ -683,7 +683,7 @@ DOM.taskForm.addEventListener('submit', (e) => {
   updateTaskCounts();
   updateHeroStats();
 
-  // Clear form
+  // Clear ang form after submission
   DOM.taskInput.value = '';
   DOM.taskNote.value = '';
   DOM.taskInput.focus();

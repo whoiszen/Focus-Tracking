@@ -275,16 +275,16 @@
       </div>
 
       <!-- Task Form -->
-      <form id="task-form" class="task-form glass-card" novalidate>
+      <form id="task-form" class="task-form glass-card">
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="task-input">Task Name</label>
-            <input type="text" id="task-input" class="form-control" placeholder="e.g. Write chapter 3 of report..." maxlength="80" autocomplete="off" />
+            <input type="text" id="task-input" class="form-control" placeholder="e.g. Write chapter 3 of report..." maxlength="80" />
             <span class="form-error" id="task-name-error"></span>
           </div>
           <div class="form-group form-group-sm">
             <label class="form-label" for="task-category">Category</label>
-            <select id="task-category" class="form-control form-select">
+            <select id="task-category" class="form-control form-select" >
               <option value="deep-work">🧠 Deep Work</option>
               <option value="admin">📋 Admin</option>
               <option value="creative">🎨 Creative</option>
@@ -294,7 +294,7 @@
           </div>
           <div class="form-group form-group-sm">
             <label class="form-label" for="task-priority">Priority</label>
-            <select id="task-priority" class="form-control form-select">
+            <select id="task-priority" class="form-control form-select" >
               <option value="high">🔴 High</option>
               <option value="medium">🟡 Medium</option>
               <option value="low">🟢 Low</option>
@@ -303,8 +303,8 @@
         </div>
         <div class="form-row form-row-actions">
           <div class="form-group form-group-note">
-            <label class="form-label" for="task-note">Quick Note (optional)</label>
-            <input type="text" id="task-note" class="form-control" placeholder="Any context or details..." maxlength="120" autocomplete="off" />
+            <label class="form-label" for="task-note">Quick Note</label>
+            <input type="text" id="task-note" class="form-control" placeholder="Any context or details..." maxlength="120" />
           </div>
           <button type="submit" class="btn btn-primary">
             <span>Add Task</span>
