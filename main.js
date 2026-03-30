@@ -1,24 +1,18 @@
-/**
- * ═══════════════════════════════════════════════════════
- * FOCUSFLOW — main.js
- * PF 302 Event-Driven Programming | Mater Dei College
- * Author: [Your Name]
- * ═══════════════════════════════════════════════════════
- *
- * Events implemented:
- *  1. Page Load Event       — Initialization, localStorage restore, loader dismiss
- *  2. Button Click Events   — Timer controls, sidebar, tasks, video, filters, etc.
- *  3. Keyboard Events       — Space (timer), ESC (sidebar), R (reset), S (skip), M (menu)
- *  4. Form Submission Event — Task form with validation
- *  5. Scroll Event          — Parallax hero, scroll-reveal animations, topbar styling
- *  6. Window Resize Event   — Sidebar auto-close on mobile, responsive behavior
- *  7. Hover Events          — Managed via CSS + JS for interactive effects
- *  8. Video Events          — YouTube API: play, pause, end, mute tracking
- *  9. Image/Parallax Effect — Multi-layer hero parallax on scroll
- * 10. Dynamic Sidebar       — Open/close with overlay, ESC support, nav highlights
- */
 
-'use strict';
+//  * Events implemented:
+//  *  1. Page Load Event       — Initialization, localStorage restore, loader dismiss
+//  *  2. Button Click Events   — Timer controls, sidebar, tasks, video, filters, etc.
+//  *  3. Keyboard Events       — Space (timer), ESC (sidebar), R (reset), S (skip), M (menu)
+//  *  4. Form Submission Event — Task form with validation
+//  *  5. Scroll Event          — Parallax hero, scroll-reveal animations, topbar styling
+//  *  6. Window Resize Event   — Sidebar auto-close on mobile, responsive behavior
+//  *  7. Hover Events          — Managed via CSS + JS for interactive effects
+//  *  8. Video Events          — YouTube API: play, pause, end, mute tracking
+//  *  9. Image/Parallax Effect — Multi-layer hero parallax on scroll
+//  * 10. Dynamic Sidebar       — Open/close with overlay, ESC support, nav highlights
+ 
+
+'use strict';   //directive nis javascript para e enable ang strict mode, less prone to error and safer siya if mag gamit ani.
 
 /* ═══════════════════════════════════════════════════
    STATE MANAGEMENT
@@ -45,7 +39,7 @@ const state = {
   // Task state
   tasks: [],
   // Stats
-  stats: {
+  stats: {  
     totalSessions: 0,
     totalMinutes: 0,
     totalTasksDone: 0,
@@ -355,6 +349,7 @@ window.addEventListener('resize', () => {
   // Auto-close sidebar on desktop (>= 1024px)
   if (window.innerWidth >= 1024 && state.ui.sidebarOpen) {
     closeSidebar();
+    console.log('Sidebar closed.'); //test if mo work ba ang close if greater than 1024 ang size sa window.
   }
 });
 
@@ -836,7 +831,34 @@ window.onYouTubeIframeAPIReady = function () {
 
 function onPlayerReady(event) {
   addVideoLog('Player ready. Click play to start.', 'idle');
+  
+  event.target.mute();
+  setupAutoPlayOnScroll();
 }
+
+function setupAutoPlayOnScroll(){
+  const videoSection = document.getElementById('yt-player');
+
+  if(!videoSection) return;
+
+  const observer =  new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+
+      if(!state.video.player) return;
+
+      if (entry.isIntersecting) {
+        state.video.player.playVideo();
+      } else {
+        state.video.player.pauseVideo();
+      }
+    });
+  }, {
+    threshold: 0.5 // play when 50% visible
+  });
+
+  observer.observe(videoSection);
+}
+  
 
 function onPlayerStateChange(event) {
   const YT_STATES = {
