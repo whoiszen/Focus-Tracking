@@ -191,6 +191,7 @@ window.addEventListener('load', () => {
 /* ═══════════════════════════════════════════════════
    SIDEBAR — Dynamic Navigation (Event: Click + ESC)
    ═══════════════════════════════════════════════════ */
+// Opens the sidebar menu and locks page scrolling.
 function openSidebar() {
   state.ui.sidebarOpen = true;
   DOM.sidebar.classList.add('open');
@@ -200,6 +201,7 @@ function openSidebar() {
   updateSidebarActiveLink();
 }
 
+// Closes the sidebar menu and restores page scrolling.
 function closeSidebar() {
   state.ui.sidebarOpen = false;
   DOM.sidebar.classList.remove('open');
@@ -233,6 +235,7 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
   });
 });
 
+// Highlights the sidebar link for the section currently in view.
 function updateSidebarActiveLink() {
   const sections = ['hero-section', 'timer-section', 'tasks-section', 'ambient-section', 'stats-section'];
   let activeSection = 'hero-section';
@@ -333,9 +336,16 @@ window.addEventListener('scroll', () => {
     const heroHeight = document.getElementById('hero-section').offsetHeight;
     const progress = Math.min(scrollY / heroHeight, 1);
     const layers = parallax.querySelectorAll('.parallax-layer');
-    layers[0].style.transform = `translateY(${scrollY * 0.3}px)`;   // Slow layer
-    layers[1].style.transform = `translateY(${scrollY * 0.5}px)`;   // Medium layer
-    layers[2].style.transform = `translateY(${scrollY * 0.7}px)`;   // Fast layer
+    layers[0].style.transform = `translateY(${scrollY * 0.5}px)`;   // Slow layer (increased from 0.3)
+    layers[1].style.transform = `translateY(${scrollY * 0.8}px)`;   // Medium layer (increased from 0.5)
+    layers[2].style.transform = `translateY(${scrollY * 1.2}px)`;   // Fast layer (increased from 0.7)
+    // Dynamic color shift on parallax background
+    const startColor = [124, 58, 237]; // Purple
+    const endColor = [6, 182, 212];    // Cyan
+    const r = Math.round(startColor[0] + (endColor[0] - startColor[0]) * progress);
+    const g = Math.round(startColor[1] + (endColor[1] - startColor[1]) * progress);
+    const b = Math.round(startColor[2] + (endColor[2] - startColor[2]) * progress);
+    parallax.style.background = `linear-gradient(to bottom, rgba(${r}, ${g}, ${b}, 0.1), rgba(${r}, ${g}, ${b}, 0.3))`;
     // Fade hero content on scroll
     const heroContent = document.querySelector('.hero-content');
     if (heroContent) {
@@ -373,6 +383,7 @@ window.addEventListener('resize', () => {
    TIMER — Core Logic
    ═══════════════════════════════════════════════════ */
 
+// Adds the SVG gradient used by the timer progress ring.
 function injectRingGradient() {
   // Insert SVG gradient defs into the ring SVG
   const svg = document.querySelector('.timer-ring');
@@ -386,6 +397,7 @@ function injectRingGradient() {
   svg.insertBefore(defs, svg.firstChild);
 }
 
+// Returns the duration in seconds for the current timer phase
 function getPhaseSeconds() {
   const c = state.timer.config;
   if (state.timer.phase === 'focus')       return c.focusMin * 60;
@@ -394,6 +406,7 @@ function getPhaseSeconds() {
   return c.focusMin * 60;
 }
 
+// Updates the timer text and browser tab title.
 function updateTimerDisplay() {
   const rem = state.timer.remainingSeconds;
   const m = Math.floor(rem / 60);
@@ -404,6 +417,7 @@ function updateTimerDisplay() {
   document.title = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} — FocusFlow`;
 }
 
+// Updates the circular progress ring based on remaining time.
 function updateTimerRing() {
   const totalDash = 603; // 2π * r ≈ 2 * 3.14159 * 96 ≈ 603
   const progress = state.timer.remainingSeconds / state.timer.totalSeconds;
@@ -419,6 +433,7 @@ function updateTimerRing() {
   }
 }
 
+// Shows the current session number and upcoming phase.
 function updateSessionInfo() {
   DOM.currentSessionNum.textContent = state.timer.currentSession;
   const isLastSession = state.timer.currentSession >= state.timer.config.sessionsPerCycle;
@@ -427,17 +442,20 @@ function updateSessionInfo() {
     : 'Focus next';
 }
 
+// Refreshes the phase label styling for focus or break mode.
 function updatePhaseLabel() {
   const labels = { 'focus': 'FOCUS', 'short-break': 'SHORT BREAK', 'long-break': 'LONG BREAK' };
   DOM.timerPhaseLabel.textContent = labels[state.timer.phase] || 'FOCUS';
   DOM.timerPhaseLabel.className = 'timer-phase-label' + (state.timer.phase !== 'focus' ? ' break-phase' : '');
 }
 
+// Toggles timer between start and pause
 function toggleTimer() {
   if (!state.timer.running) startTimer();
   else pauseTimer();
 }
 
+// Starts the countdown and updates the timer status.
 function startTimer() {
   state.timer.running = true;
   state.timer.paused = false;
@@ -459,6 +477,7 @@ function startTimer() {
   }, 1000);
 }
 
+// Pauses the countdown and switches the UI to a paused state.
 function pauseTimer() {
   state.timer.running = false;
   state.timer.paused = true;
@@ -468,6 +487,7 @@ function pauseTimer() {
   setStatus('Paused', 'ready');
 }
 
+// Resets the timer back to the current phase's full duration.
 function resetTimer() {
   clearInterval(state.timer.intervalId); //e stop niya 
   state.timer.running = false;
@@ -480,6 +500,7 @@ function resetTimer() {
   setStatus('Ready', 'ready');
 }
 
+// Forces the current phase to end immediately.
 function skipPhase() {
   clearInterval(state.timer.intervalId);
   state.timer.running = false;
@@ -487,6 +508,7 @@ function skipPhase() {
   onPhaseComplete();
 }
 
+// Handles phase transitions when a focus or break timer ends.
 function onPhaseComplete() {
   clearInterval(state.timer.intervalId);
   state.timer.running = false;
@@ -532,6 +554,7 @@ function onPhaseComplete() {
   updateHeroStats();
 }
 
+// Updates the topbar status label and dot
 function setStatus(label, type) {
   DOM.statusLabel.textContent = label;
   DOM.statusDot.className = 'status-dot ' + (type === 'running' ? 'running' : type === 'break' ? 'break' : '');
@@ -556,27 +579,28 @@ DOM.timerSkipBtn.addEventListener('click', () => {
 DOM.modePomodoroBtn.addEventListener('click', () => switchTimerMode('pomodoro'));
 DOM.modeCustomBtn.addEventListener('click', () => switchTimerMode('custom'));
 
+// Switches between Pomodoro mode and the custom timer mode.
 function switchTimerMode(mode) {
-  state.timer.mode = mode;
-  resetTimer();
-  if (mode === 'pomodoro') {
-    DOM.modePomodoroBtn.classList.add('active');
-    DOM.modeCustomBtn.classList.remove('active');
-    DOM.pomodoroConfig.classList.remove('hidden');
-    DOM.customConfig.classList.add('hidden');
-    state.timer.phase = 'focus';
-    state.timer.totalSeconds = state.timer.config.focusMin * 60;
-    state.timer.remainingSeconds = state.timer.totalSeconds;
-  } else {
-    DOM.modeCustomBtn.classList.add('active');
-    DOM.modePomodoroBtn.classList.remove('active');
-    DOM.customConfig.classList.remove('hidden');
-    DOM.pomodoroConfig.classList.add('hidden');
+  state.timer.mode = mode;        // Updates the global state to reflect the new timer mode ('pomodoro' or 'custom'). This is stored in the 'state' object for persistence and reference elsewhere in the app.
+  resetTimer();                   // Calls the resetTimer() function to stop any running timer, reset the countdown, and set the timer to a paused state. This ensures a clean slate when switching modes.
+  if (mode === 'pomodoro') {      // Checks if the selected mode is 'pomodoro'. If true, it configures the UI and state for Pomodoro mode (structured focus/break intervals).
+    DOM.modePomodoroBtn.classList.add('active');          // Adds the 'active' CSS class to the Pomodoro mode button (DOM.modePomodoroBtn) to visually indicate it's selected.
+    DOM.modeCustomBtn.classList.remove('active');         // Removes the 'active' CSS class from the Custom mode button (DOM.modeCustomBtn) to deselect it visually.
+    DOM.pomodoroConfig.classList.remove('hidden');       // Shows the Pomodoro configuration panel (DOM.pomodoroConfig) by removing the 'hidden' CSS class, allowing users to adjust focus/break times.
+    DOM.customConfig.classList.add('hidden');           // Hides the Custom configuration panel (DOM.customConfig) by adding the 'hidden' CSS class, since it's not needed in Pomodoro mode.
+    state.timer.phase = 'focus';                                        // Sets the current timer phase to 'focus' (the starting phase in Pomodoro mode, where work happens).
+    state.timer.totalSeconds = state.timer.config.focusMin * 60;         // Calculates and sets the total duration for the timer based on the configured focus time (e.g., 25 minutes * 60 seconds = 1500 seconds). This comes from state.timer.config.focusMin.
+    state.timer.remainingSeconds = state.timer.totalSeconds;            // Initializes the remaining time to match the total seconds, effectively resetting the countdown for the new mode.
+  } else {                                                          // If the mode is not 'pomodoro', it defaults to 'custom' mode and configures the UI/state accordingly.
+    DOM.modeCustomBtn.classList.add('active');                    // Adds the 'active' CSS class to the Custom mode button to visually indicate it's selected.
+    DOM.modePomodoroBtn.classList.remove('active');               // Removes the 'active' CSS class from the Pomodoro mode button to deselect it.
+    DOM.customConfig.classList.remove('hidden');                  // Shows the Custom configuration panel (where users set hours/minutes/seconds) by removing the 'hidden' CSS class.
+    DOM.pomodoroConfig.classList.add('hidden');                   // Hides the Pomodoro configuration panel since it's not relevant in Custom mode.
   }
-  updateTimerDisplay();
-  updateTimerRing();
-  updatePhaseLabel();
-  showToast(`Switched to ${mode === 'pomodoro' ? 'Pomodoro' : 'Custom'} mode`, '⚙', 'info');
+  updateTimerDisplay();                          // Calls updateTimerDisplay() to refresh the timer's visual display (minutes and seconds) in the UI, reflecting any changes from the mode switch.
+  updateTimerRing();                               // Calls updateTimerRing() to update the circular progress ring around the timer, adjusting its color and progress based on the new mode/phase.
+  updatePhaseLabel();                            // Calls updatePhaseLabel() to update the phase label (e.g., "FOCUS" or "BREAK") in the UI, ensuring it matches the current state.
+  showToast(`Switched to ${mode === 'pomodoro' ? 'Pomodoro' : 'Custom'} mode`, '⚙', 'info'); // Displays a toast notification to inform the user of the mode switch. The message dynamically says "Pomodoro" or "Custom" based on the mode, with a gear icon and 'info' styling.
 }
 
 // Button Clicks: Pomodoro config controls
@@ -640,6 +664,7 @@ DOM.notifClose.addEventListener('click', () => {
   DOM.notifBanner.classList.add('hidden');
 });
 
+// Shows the timer notification banner for a few seconds.
 function showNotif(message) {
   DOM.notifText.textContent = message;
   DOM.notifBanner.classList.remove('hidden');
@@ -710,6 +735,7 @@ DOM.taskForm.addEventListener('submit', (e) => {
 /* ═══════════════════════════════════════════════════
    TASK RENDERING & INTERACTIONS
    ═══════════════════════════════════════════════════ */
+// Renders the task list based on the active filter.
 function renderTaskList() {
   const filter = state.ui.activeFilter;
   let tasks = state.tasks;
@@ -733,6 +759,7 @@ function renderTaskList() {
   });
 }
 
+// Builds the DOM element for a single task item.
 function createTaskElement(task) {
   const div = document.createElement('div');
   div.className = 'task-item' + (task.done ? ' done' : '');
@@ -769,6 +796,7 @@ function createTaskElement(task) {
   return div;
 }
 
+// Toggles a task's completed state and refreshes the UI.
 function toggleTaskDone(id) {
   const task = state.tasks.find(t => t.id === id);
   if (!task) return;
@@ -786,6 +814,7 @@ function toggleTaskDone(id) {
   updateHeroStats();
 }
 
+// Removes a task from the list and updates the display.
 function deleteTask(id) {
   const task = state.tasks.find(t => t.id === id);
   state.tasks = state.tasks.filter(t => t.id !== id);
@@ -795,6 +824,7 @@ function deleteTask(id) {
   if (task) showToast(`Task deleted`, '🗑', 'info');
 }
 
+// Updates active and done task counts in UI
 function updateTaskCounts() {
   const active = state.tasks.filter(t => !t.done).length;
   const done   = state.tasks.filter(t => t.done).length;
@@ -845,6 +875,7 @@ window.onYouTubeIframeAPIReady = function () {
   });
 };
 
+// Runs setup steps once the YouTube player is ready.
 function onPlayerReady(event) {
   addVideoLog('Player ready. Click play to start.', 'idle');
   
@@ -852,6 +883,7 @@ function onPlayerReady(event) {
   setupAutoPlayOnScroll();
 }
 
+// Auto-plays or pauses the video based on viewport visibility.
 function setupAutoPlayOnScroll(){
   const videoSection = document.getElementById('yt-player');
 
@@ -876,6 +908,7 @@ function setupAutoPlayOnScroll(){
 }
   
 
+// Updates video stats and UI when the player state changes.
 function onPlayerStateChange(event) {
   const YT_STATES = {
     '-1': 'unstarted',
@@ -961,6 +994,7 @@ DOM.videoPlayBigBtn.addEventListener('click', () => {
   }
 });
 
+// Adds a timestamped entry to the video activity log.
 function addVideoLog(message, type) {
   const logEl = DOM.logEntries;
   // Remove idle placeholder
@@ -980,6 +1014,7 @@ function addVideoLog(message, type) {
   }
 }
 
+// Briefly highlights the matching video event card.
 function flashEventCard(eventType) {
   const card = document.querySelector(`.vevent-item[data-event="${eventType}"]`);
   if (card) {
@@ -991,6 +1026,7 @@ function flashEventCard(eventType) {
 /* ═══════════════════════════════════════════════════
    STATS & SESSION RECORDING
    ═══════════════════════════════════════════════════ */
+// Records a completed focus session in stats
 function recordSession(minutes) {
   const today = new Date().toDateString();
   if (state.stats.lastDate !== today) {
@@ -1017,6 +1053,7 @@ function recordSession(minutes) {
   renderHistory();
 }
 
+// Refreshes the stats counters shown in the dashboard.
 function renderStats() {
   DOM.statSessions.textContent = state.stats.totalSessions;
   DOM.statMinutes.textContent  = state.stats.totalMinutes;
@@ -1024,6 +1061,7 @@ function renderStats() {
   DOM.statToday.textContent    = state.stats.todaySessions;
 }
 
+// Renders the session history list
 function renderHistory() {
   DOM.historyList.innerHTML = '';
   if (state.stats.history.length === 0) {
@@ -1050,6 +1088,7 @@ function renderHistory() {
   });
 }
 
+// Syncs the hero summary cards with the latest stats.
 function updateHeroStats() {
   DOM.totalSessionsHero.textContent = state.stats.totalSessions;
   DOM.totalMinutesHero.textContent  = state.stats.totalMinutes;
@@ -1103,6 +1142,7 @@ DOM.heroLearnBtn.addEventListener('click', () => {
 /* ═══════════════════════════════════════════════════
    TOAST NOTIFICATIONS
    ═══════════════════════════════════════════════════ */
+// Displays a temporary toast notification
 function showToast(message, icon = '💡', type = 'info') {
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
@@ -1138,6 +1178,7 @@ document.querySelectorAll('.glass-card').forEach(card => {
 /* ═══════════════════════════════════════════════════
    LOCAL STORAGE — Persistence
    ═══════════════════════════════════════════════════ */
+// Saves app data to localStorage
 function saveToStorage() {
   try {
     localStorage.setItem('focusflow_tasks',  JSON.stringify(state.tasks));
@@ -1148,6 +1189,7 @@ function saveToStorage() {
   }
 }
 
+// Loads app data from localStorage on startup
 function loadFromStorage() {
   try {
     const tasks  = localStorage.getItem('focusflow_tasks');
@@ -1181,6 +1223,7 @@ function loadFromStorage() {
 /* ═══════════════════════════════════════════════════
    UTILITIES
    ═══════════════════════════════════════════════════ */
+// Escapes HTML characters to prevent XSS
 function escapeHTML(str) {
   const div = document.createElement('div');
   div.appendChild(document.createTextNode(str));
