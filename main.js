@@ -296,6 +296,22 @@ document.addEventListener('keydown', (e) => {
         openSidebar();
       }
       break;
+    
+    case 'o':
+    case 'O':
+      if (!isInput) {
+        e.preventDefault();
+        openSidebar();
+      }
+      break;
+    
+    case 'c':
+    case 'C':
+      if (state.ui.sidebarOpen) {
+        e.preventDefault();
+        closeSidebar();
+      }
+      break;
   }
 });
 
